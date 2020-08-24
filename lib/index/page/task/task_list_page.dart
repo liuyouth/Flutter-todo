@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:task/index/index_router.dart';
+import 'package:task/index/page/login/user.dart';
 import 'package:task/index/page/task/task.dart';
 import 'package:task/index/page/task/task_list_core.dart';
 import 'package:task/packages/fast_mvvm/fast_mvvm.dart';
@@ -12,7 +13,7 @@ import 'package:task/res/colors.dart';
 import 'package:task/res/styles.dart';
 import 'package:task/routers/fluro_navigator.dart';
 import 'package:task/util/theme_utils.dart';
-import 'package:task/widgets/english/englishmuliti_select_choice.dart';
+import 'package:task/widgets/Image/imageShadow.dart';
 import 'package:task/widgets/lb/BottomDragWidget.dart';
 import 'package:task/widgets/load_image.dart';
 import 'package:task/widgets/my_card.dart';
@@ -29,11 +30,13 @@ class TaskListPage extends StatelessWidget with BaseView<TaskListVM> {
   final bool rootRefresh;
   final bool configState;
   final bool loadData;
+
   _refresh(TaskListVM vm) {
     vm.viewRefresh(rootRefresh: true);
   }
 
   void _into(TaskListVM vm) {}
+
   @override
   ViewConfig<TaskListVM> initConfig(BuildContext context) {
     var _empty = configState
@@ -280,7 +283,6 @@ class TaskListPage extends StatelessWidget with BaseView<TaskListVM> {
   }
 
   getListView(TaskListVM vm) {
-
     return Container(
       child: Column(
         children: <Widget>[
@@ -320,7 +322,8 @@ class TaskListPage extends StatelessWidget with BaseView<TaskListVM> {
                   top: 10,
                 ),
                 child: TextField(
-                  maxLength: 100, //最大长度，设置此项会让TextField右下角有一个输入数量的统计字符串
+                  maxLength: 100,
+                  //最大长度，设置此项会让TextField右下角有一个输入数量的统计字符串
                   minLines: 3,
                   maxLines: 4,
                   style: TextStyles.textDarkGray14,
@@ -468,21 +471,42 @@ class TaskListPage extends StatelessWidget with BaseView<TaskListVM> {
         ),
         title: Row(
           children: [
+
             Padding(
               padding: EdgeInsets.only(right: 16),
+//              child: ValueListenableBuilder<User>(
+//                  valueListenable: vm.user,
+//                  builder: (_, v, __) {
+//                    return Image.network(
+//                      v.avatar,
+//                      width: 40,
+//                      height: 40,
+//                    );
+//                  }),
               child: IconButton(
+                iconSize: 48,
                 onPressed: () {
-//                NavigatorUtils.push(context, LoginRouter.loginPage);
+                NavigatorUtils.push(context, IndexRouter.todoPage);
                 },
-                tooltip: '设置',
-                icon: LoadAssetImage(
-                  "support/functions",
-                  width: 26.0,
-                  height: 26.0,
-                  color: ThemeUtils.getIconColor(context),
-                ),
-              ),
+                tooltip: '我的',
+                icon: ValueListenableBuilder<User>(
+                    valueListenable: vm.user,
+                    builder: (_, v, __) {
+//                      return ImageShadow(url: v.avatar);
+                      return Image.network(
+                        v.avatar,
+                        width: 40,
+                        height: 40,
+                      );
+                    }
+              )),
             ),
+//            LoadAssetImage(
+//              "support/functions",
+//              width: 26.0,
+//              height: 26.0,
+//              color: ThemeUtils.getIconColor(context),
+//            ),
             Text("",
                 style: TextStyle(
                     background: Paint()..color = Colors.white,

@@ -1,3 +1,4 @@
+import 'package:flustars/flustars.dart';
 import 'package:task/index/NetManager/NetManager.dart';
 import 'package:task/index/NetManager/Result.dart';
 import 'package:task/index/page/login/user.dart';
@@ -33,7 +34,11 @@ class TaskListVM
 
   @override
   List<Task> get list => entity.list;
-
+@override
+  void init() {
+    super.init();
+    user.value = User.fromJson(SpUtil.getObject("user"));
+  }
   @override
   Future<DataResponse<TaskListEntity>> requestHttp(
       {bool isLoad, int page, params}) async {

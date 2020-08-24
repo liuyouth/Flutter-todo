@@ -126,7 +126,50 @@ class _TodoPageState extends State<TodoPage>
               headerSliverBuilder: (context, innerBoxIsScrolled) {
                 return _sliverBuilder(context);
               },
-              body: Text("sss"),
+              body: Stack(//重叠的Stack Widget，实现重贴
+                  children: <Widget>[
+                    Center(
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Container(
+// 容器组件
+                              width: 200.0,
+                              height: 200.0,
+                              child: Center(
+                                  child: Image.network(
+                                      'http://p1.music.126.net/mvucW5snDHaqKs4lj4SiRg==/109951164225997518.jpg')),
+                            ))),
+                    Center(
+                      child: ClipRect(
+//裁切长方形
+                        child: BackdropFilter(
+//背景滤镜器
+                          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 6.0),
+//图片模糊过滤，横向竖向都设置5.0
+                          child: Opacity(
+//透明控件
+                              opacity: 1,
+                              child: Container(
+// 容器组件
+                                  width: 220.0,
+                                  height: 230.0,
+                                  child: Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Container(
+                                      padding: const EdgeInsets.only(top: 5),
+                                      width: 200.0,
+                                      height: 205.0,
+                                      child: new ClipRRect(
+                                        borderRadius: BorderRadius.circular(16),
+                                        child: Image.network(
+                                            'http://p1.music.126.net/mvucW5snDHaqKs4lj4SiRg==/109951164225997518.jpg'),
+                                      ),
+                                    ),
+                                  ))),
+                        ),
+                      ),
+                    )
+                  ]),
             ),
             Container(
                 alignment: Alignment.bottomCenter,

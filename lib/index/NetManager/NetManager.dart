@@ -9,7 +9,9 @@ import 'package:rxdart/rxdart.dart';
 
 /// 所有网络请求都通过 NetManager 发起请求
 class NetManager {
-  static const String HOST = "http://192.168.5.14:2001/";
+
+    static const String HOST = "http://api.todo.moi.pub/";
+//  static const String HOST = "http://192.168.5.14:2001/";
 //  static const String HOST = "http://172.20.10.3:2001/";
 //  static const String HOST = "http://192.168.101.6:2001/";
   static NetManager get instance => NetManager();
