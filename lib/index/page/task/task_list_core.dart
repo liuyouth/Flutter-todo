@@ -60,10 +60,6 @@ class TaskListVM
   @override
   void initResultData() {
     print("sdsdddddddddddddddddd");
-    infoEditingController.addListener(() {});
-    textEditingController.addListener(() {
-      if (textEditingController.text.isEmpty) {}
-    });
   }
 
   void fastAddTask() async {
