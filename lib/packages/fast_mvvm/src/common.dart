@@ -4,12 +4,26 @@ import 'package:provider/provider.dart';
 
 import 'base.dart';
 
+/// 接口数据 响应
 class DataResponse<T> {
   T entity;
+
+  /// 最终结果
   bool result;
+
+  /// dio 的默认
   Response response;
+
+  /// 当前页面总页码  配合 [BaseListViewModel] 默认一页
   int totalPageNum;
+
+  /// 扩展数据
+  Map<String, dynamic> extend;
+
+  /// 语法糖
   get data => response.data;
+
+  /// 语法糖 默认的[Response]的statusCode 可以在 [InterceptorsWrapper] 自定义处理
   int get code => response.statusCode;
 
   DataResponse({
@@ -19,9 +33,126 @@ class DataResponse<T> {
     this.totalPageNum = 1,
   });
 
-  @override
-  String toString() {
-    return 'DataResponse{entity: $entity, result: $result, response: $response, totalPageNum: $totalPageNum}';
+  /// 拷贝
+  DataResponse.copy(
+      {DataResponse dataResponse,
+      @required this.entity,
+      this.response,
+      this.totalPageNum,
+      this.result,
+      this.extend}) {
+    response ??= dataResponse.response;
+    totalPageNum ??= dataResponse.totalPageNum;
+    result ??= dataResponse.result;
+    extend ??= dataResponse.extend;
+  }
+}
+
+/// view层 配置用类  配置全局默认状态页
+class ViewConfig<VM extends BaseViewModel> {
+  ViewConfig({
+    @required this.vm,
+    this.child,
+    this.color,
+    this.load = true,
+    this.checkEmpty = true,
+    this.state,
+    this.value = false,
+    this.busy,
+    this.empty,
+    this.error,
+    this.unAuthorized,
+  }) : this.root = true {
+    setViewState();
+  }
+
+  ViewConfig.value({
+    @required this.vm,
+    this.child,
+    this.color,
+    this.load = false,
+    this.checkEmpty = true,
+    this.state,
+    this.value = true,
+    this.busy,
+    this.empty,
+    this.error,
+    this.unAuthorized,
+  }) : this.root = true {
+    setViewState();
+  }
+
+  ViewConfig.noRoot({
+    @required this.vm,
+    this.child,
+    this.color,
+    this.load = true,
+    this.checkEmpty = true,
+    this.state,
+    this.value = false,
+    this.busy,
+    this.empty,
+    this.error,
+    this.unAuthorized,
+  }) : this.root = false {
+    setViewState();
+  }
+
+  /// VM
+  VM vm;
+
+  Widget child;
+
+  /// 背景颜色
+  Color color;
+
+  /// 加载
+  bool load;
+
+  /// 是否根布局刷新 采用 [Selector]
+  bool root;
+
+  /// [ChangeNotifierProvider.value] 或者[ChangeNotifierProvider]
+  bool value;
+
+  /// 是否验证空数据
+  bool checkEmpty;
+
+  /// 页面变化控制  可以被其他页面控制刷新
+  int state;
+
+  static VSBuilder gBusy;
+  static VSBuilder gEmpty;
+  static VSBuilder gError;
+  static VSBuilder gunAuthorized;
+
+  /// 列表页  列表数据空
+  static VSBuilder gListDataEmpty;
+
+  VSBuilder<VM> busy;
+  VSBuilder<VM> empty;
+  VSBuilder<VM> error;
+  VSBuilder<VM> unAuthorized;
+
+  void setViewState() {
+    this.busy ??= gBusy;
+    this.empty ??= gEmpty;
+    this.error ??= gError;
+    this.unAuthorized ??= gunAuthorized;
+  }
+}
+
+/// 获取可用的监听 [ChangeNotifierProvider.value] 或者 [ChangeNotifierProvider]
+ChangeNotifierProvider availableCNP<T extends BaseViewModel>(
+    BuildContext context, ViewConfig<T> changeNotifier,
+    {Widget child}) {
+  if (changeNotifier.value) {
+    changeNotifier.vm = Provider.of<T>(context);
+    return ChangeNotifierProvider<T>.value(
+        value: changeNotifier.vm, child: child);
+  } else {
+    return ChangeNotifierProvider<T>(
+        create: (_) => changeNotifier.vm, child: child);
   }
 }
 

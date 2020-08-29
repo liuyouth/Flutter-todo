@@ -13,7 +13,6 @@ import 'package:task/res/colors.dart';
 import 'package:task/res/styles.dart';
 import 'package:task/routers/fluro_navigator.dart';
 import 'package:task/util/theme_utils.dart';
-import 'package:task/widgets/Image/imageShadow.dart';
 import 'package:task/widgets/lb/BottomDragWidget.dart';
 import 'package:task/widgets/load_image.dart';
 import 'package:task/widgets/my_card.dart';
@@ -30,13 +29,10 @@ class TaskListPage extends StatelessWidget with BaseView<TaskListVM> {
   final bool rootRefresh;
   final bool configState;
   final bool loadData;
-
   _refresh(TaskListVM vm) {
     vm.viewRefresh(rootRefresh: true);
   }
-
   void _into(TaskListVM vm) {}
-
   @override
   ViewConfig<TaskListVM> initConfig(BuildContext context) {
     var _empty = configState
@@ -72,81 +68,124 @@ class TaskListPage extends StatelessWidget with BaseView<TaskListVM> {
       appBar: getAppBar(context, vm),
       body: Stack(
         children: [
-          BottomDragWidget(
-              body: state ??
-                  Padding(
-                      padding: EdgeInsets.only(bottom: 61),
-                      child: Stack(
-                        children: [
-//                        Divider(height: 1.0, color: Colors.black12,),
-                          Padding(
-                              padding: EdgeInsets.only(top: 30),
-                              child: Container(
-                                child: EasyRefresh(
-                                  controller: vm.refreshController,
-                                  onLoad: vm.loadMore,
-                                  onRefresh: vm.pullRefresh,
-                                  child: ListView.builder(
-                                    padding: EdgeInsets.all(10),
-                                    itemCount: vm.list.length,
-                                    itemBuilder: (ctx, index) {
-                                      return Selector<TaskListVM, Task>(
-                                        selector: (_, aVM) => vm.list[index],
-                                        shouldRebuild: (pre, next) =>
-                                            pre == next,
-                                        builder: (_, Task value, __) =>
-                                            _item(vm, value),
-                                      );
-                                    },
-                                  ),
-                                ),
-//                                decoration:
-//                                    BoxDecoration(color: Colors.purpleAccent),
-                              )),
-
-                          /// 顶部 层级指示跳
-                          Container(
-                            height: 30,
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                            child: Row(children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: 10, left: 8),
-                                child: Icon(
-                                  Icons.reorder,
-                                  size: 16,
-                                  color: Colours.button_disabled,
-                                ),
-                              ),
-                              Container(
-                                width: 300,
-                                height: 30,
-                                child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: getTaskCatalog(),
-                                ),
-                              )
-                            ]),
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Color(0x80ccd7e9),
-                                    offset: Offset(1.0, 2.0),
-                                    blurRadius: 8.0,
-                                    spreadRadius: .2),
-                              ],
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                  bottomRight: Radius.circular(16.0),
-                                  bottomLeft: Radius.circular(16.0)),
-                            ),
-                          ),
-                        ],
-                      )),
-              dragContainer: DragContainer(
-                drawer: getListView(vm),
-                defaultShowHeight: 60.0,
-                height: 230.0,
-              )),
+          ListOrGridEmpty.max(
+            vm: vm,
+            childBuild: () => EasyRefresh(
+              controller: vm.refreshController,
+              onLoad: vm.loadMore,
+              onRefresh: vm.pullRefresh,
+              child: ListView.builder(
+                itemCount: vm.list.length,
+                itemBuilder: (ctx, index) {
+                  return Selector<TaskListVM, Task>(
+                    selector: (_, aVM) => aVM.list[index],
+                    shouldRebuild: (pre, next) => pre == next,
+                    builder: (_, Task value, __) =>
+                        _item(vm, value),
+                  );
+                },
+              ),
+            ),
+          ),
+//          BottomDragWidget(
+//              body: state ??
+//                  Padding(
+//                      padding: EdgeInsets.only(bottom: 61),
+//                      child: Stack(
+//                        children: [
+////                        Divider(height: 1.0, color: Colors.black12,),
+////                          Padding(
+////                              padding: EdgeInsets.only(top: 30),
+////                              child: Container(
+////                                child: EasyRefresh(
+////                                  controller: vm.refreshController,
+////                                  onLoad: vm.loadMore,
+////                                  onRefresh: vm.pullRefresh,
+////                                  child: ListView.builder(
+////                                    padding: EdgeInsets.all(10),
+////                                    itemCount: vm.list.length,
+////                                    itemBuilder: (ctx, index) {
+////                                      print("build item $index");
+////                                      return _item(vm, vm.list[index]);
+//////                                      return Selector<TaskListVM, Task>(
+//////                                        selector: (_, aVM) => vm.list[index],
+////////                                        shouldRebuild: (pre, next) =>
+////////                                            _shouldRebuild(pre, next),
+//////                                        builder: (_, Task value, __) =>
+//////                                            _item(vm, value),
+//////                                      );
+////                                    },
+////                                  ),
+////                                ),
+//////                                decoration:
+//////                                    BoxDecoration(color: Colors.purpleAccent),
+////                              )),
+////                          Padding(
+////                            padding: EdgeInsets.only(top: 35),
+////                            child: ListOrGridEmpty.max(
+////                              vm: vm,
+////                              childBuild: () => EasyRefresh(
+////                                controller: vm.refreshController,
+////                                onLoad: vm.loadMore,
+////                                onRefresh: vm.pullRefresh,
+////                                child: ListView.builder(
+////                                  itemCount: vm.list.length,
+////                                  itemBuilder: (ctx, index) {
+////                                    return Selector<TaskListVM, Task>(
+////                                      selector: (_, aVM) => aVM.list[index],
+////                                      shouldRebuild: (pre, next) => pre == next,
+////                                      builder: (_, Task value, __) =>
+////                                          _item(vm, value),
+////                                    );
+////                                  },
+////                                ),
+////                              ),
+////                            ),
+////                          ),
+//
+//                          /// 顶部 层级指示跳
+//                          Container(
+//                            height: 30,
+//                            padding: EdgeInsets.only(left: 10, right: 10),
+//                            child: Row(children: [
+//                              Padding(
+//                                padding: EdgeInsets.only(right: 10, left: 8),
+//                                child: Icon(
+//                                  Icons.reorder,
+//                                  size: 16,
+//                                  color: Colours.button_disabled,
+//                                ),
+//                              ),
+//                              Container(
+//                                width: 300,
+//                                height: 30,
+//                                child: ListView(
+//                                  scrollDirection: Axis.horizontal,
+//                                  children: getTaskCatalog(),
+//                                ),
+//                              )
+//                            ]),
+//                            decoration: BoxDecoration(
+//                              boxShadow: [
+//                                BoxShadow(
+//                                    color: Color(0x80ccd7e9),
+//                                    offset: Offset(1.0, 2.0),
+//                                    blurRadius: 8.0,
+//                                    spreadRadius: .2),
+//                              ],
+//                              color: Colors.white,
+//                              borderRadius: BorderRadius.only(
+//                                  bottomRight: Radius.circular(16.0),
+//                                  bottomLeft: Radius.circular(16.0)),
+//                            ),
+//                          ),
+//                        ],
+//                      )),
+//              dragContainer: DragContainer(
+//                drawer: getListView(vm),
+//                defaultShowHeight: 60.0,
+//                height: 230.0,
+//              )),
 
           /// 页面全局右下角添加按钮
           Positioned(
@@ -288,13 +327,13 @@ class TaskListPage extends StatelessWidget with BaseView<TaskListVM> {
         children: <Widget>[
           getTouchBar(),
           Container(
-            width: 360,
+            width: double.infinity,
             height: 49,
             child: Row(
               children: [
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.only(right: 0),
+                    padding: EdgeInsets.only(left: 20),
                     child: TextField(
                       style: TextStyles.textBold18,
                       controller: vm.textEditingController,
@@ -471,7 +510,6 @@ class TaskListPage extends StatelessWidget with BaseView<TaskListVM> {
         ),
         title: Row(
           children: [
-
             Padding(
               padding: EdgeInsets.only(right: 16),
 //              child: ValueListenableBuilder<User>(
@@ -484,22 +522,21 @@ class TaskListPage extends StatelessWidget with BaseView<TaskListVM> {
 //                    );
 //                  }),
               child: IconButton(
-                iconSize: 48,
-                onPressed: () {
-                NavigatorUtils.push(context, IndexRouter.todoPage);
-                },
-                tooltip: '我的',
-                icon: ValueListenableBuilder<User>(
-                    valueListenable: vm.user,
-                    builder: (_, v, __) {
+                  iconSize: 48,
+                  onPressed: () {
+                    NavigatorUtils.push(context, IndexRouter.todoPage);
+                  },
+                  tooltip: '我的',
+                  icon: ValueListenableBuilder<User>(
+                      valueListenable: vm.user,
+                      builder: (_, v, __) {
 //                      return ImageShadow(url: v.avatar);
-                      return Image.network(
-                        v.avatar,
-                        width: 40,
-                        height: 40,
-                      );
-                    }
-              )),
+                        return Image.network(
+                          v.avatar,
+                          width: 40,
+                          height: 40,
+                        );
+                      })),
             ),
 //            LoadAssetImage(
 //              "support/functions",
@@ -523,5 +560,12 @@ class TaskListPage extends StatelessWidget with BaseView<TaskListVM> {
                     color: Color(0xFF333333)))
           ],
         ));
+  }
+
+  bool _shouldRebuild(Task pre, Task next) {
+    print('pre == next ' + (pre == next).toString());
+    print('pre ' + pre.toString());
+    print('next ' + next.toString());
+    return pre == next;
   }
 }

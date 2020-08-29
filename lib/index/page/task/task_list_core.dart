@@ -15,6 +15,7 @@ import 'task.dart';
 class TaskListVM
     extends BaseListViewModel<TaskListModel, TaskListEntity, Task> {
   TaskListVM(this.isLoadData);
+
   List<TestSelectEntity> selectNormalList = new List();
 
   List<TestSelectEntity> allLNormaList = new List();
@@ -28,32 +29,37 @@ class TaskListVM
   ValueNotifier<String> vnTime = ValueNotifier("暂无");
   TextEditingController textEditingController = TextEditingController();
   TextEditingController infoEditingController = TextEditingController();
+
   @override
   void jointList(TaskListEntity newEntity) =>
       entity.list.addAll(newEntity.list);
 
   @override
   List<Task> get list => entity.list;
-@override
+
+  @override
   void init() {
     super.init();
     user.value = User.fromJson(SpUtil.getObject("user"));
   }
+
   @override
   Future<DataResponse<TaskListEntity>> requestHttp(
       {bool isLoad, int page, params}) async {
     /// 判断是否加载数据， 测试状态页用
+
     if (!isLoadData && firstLoad) {
       firstLoad = false;
+      print('requestHttp null');
       return null;
     }
 //    var d = await model.getArticleList();
-    return await model.getArticleList(isComplete: isDone.value,page:page);
+    return await model.getArticleList(isComplete: isDone.value, page: page);
   }
 
   @override
   void initResultData() {
-
+    print("sdsdddddddddddddddddd");
     infoEditingController.addListener(() {});
     textEditingController.addListener(() {
       if (textEditingController.text.isEmpty) {}
@@ -94,12 +100,13 @@ class TaskListVM
 class TaskListModel extends BaseModel {
   /// todo列表
   Future<DataResponse<TaskListEntity>> getArticleList(
-      {bool isComplete, bool isSearch,num page}) async {
-    print('iscom'+isComplete.toString());
+      {bool isComplete, bool isSearch, num page}) async {
+    print('iscom' + isComplete.toString());
     DataResponse<TaskListEntity> dataResponse;
-    ResultI<Task> data =
-        await NetManager.instance.getTaskList(isComplete: isComplete,page:page);
-    dataResponse = DataResponse(entity: TaskListEntity(data.getData()));
+    ListResult<Task> data = await NetManager.instance
+        .getTaskList(isComplete: isComplete, page: page);
+    dataResponse = DataResponse(
+        entity: TaskListEntity(data.getData()), totalPageNum: (data.allPage));
     return dataResponse;
   }
 
